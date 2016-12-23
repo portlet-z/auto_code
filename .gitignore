@@ -2,6 +2,7 @@ target/
 logs/
 classes/
 bin/
+out/
 !.mvn/wrapper/maven-wrapper.jar
 
 ### Node ###
