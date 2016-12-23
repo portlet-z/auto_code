@@ -1,0 +1,17 @@
+package ${packageName};
+
+import cn.people.one.core.base.service.BaseService;
+import cn.people.one.modules.cms.dao.${ClassName}Dao;
+import cn.people.one.modules.cms.model.${ClassName};
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class ${ClassName}Service extends BaseService<${ClassName}Dao,${ClassName}> {
+
+    @Autowired
+    private ${ClassName}Dao articleDao;
+
+}
