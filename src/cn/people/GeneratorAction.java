@@ -2,88 +2,70 @@ package cn.people;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
 import org.apache.commons.lang.StringUtils;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 /**
  * Created by zhangxinzheng on 2016/12/21.
  */
 public class GeneratorAction extends AnAction {
-    private ClassModel classModel;
-    private Editor editor;
-    private String content;
-    private boolean canCreate;
-    private AnActionEvent event;
-    private String path;
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        this.event = e;
-        canCreate = true;
-        init(e);
-        getClassModel();
-        createFiles();
+    public void actionPerformed(AnActionEvent event) {
         try {
-            if(canCreate) {
-                createClassFiles();
-                refreshProject(e);
-            }
-        } catch (IOException e1) {
-            e1.printStackTrace();
+            createFiles(event);
+            refreshProject(event);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
     private void refreshProject(AnActionEvent e) {
         e.getProject().getBaseDir().refresh(false,true);
     }
-    /**
-     * 创建class文件
-     * create class files
-     * @throws IOException
-     */
-    private void createClassFiles() throws IOException {
-        String className = classModel.getClassName();
-        String moduleName = classModel.getModuleName();
-        ClassCreateHelper.createService(path,className,moduleName);
-        ClassCreateHelper.createDao(path,className,moduleName);
-        ClassCreateHelper.createModel(path,className,moduleName);
-    }
 
-    private void createFiles() {
-        if (null == classModel.getClassName()) {
+    private void createFiles(AnActionEvent event) throws IOException{
+        VirtualFile currentFile = DataKeys.VIRTUAL_FILE.getData(event.getDataContext());
+        String path = currentFile.getPath();
+        if(!path.endsWith("resources/generator.yml")){
+            Messages.showMessageDialog("只能读取配置文件下的generator.yml文件","error",Messages.getErrorIcon());
             return;
         }
-        path = ClassCreateHelper.getCurrentPath(event, classModel.getClassFullName());
-        if(path.contains("generator")){
-            path = path.replace("generator/","");
-        }else {
-            MessagesUtil.showErrorMessage("Your Generator should in package 'generator'.", "error");
-            canCreate = false;
+        String dir = path.replace("resources/generator.yml","java");
+        InputStream inputStream = new FileInputStream(path);
+        Yaml yaml = new Yaml();
+        Map<String,Object> map = (Map<String, Object>)yaml.load(inputStream);
+        if(null == map){
+            Messages.showMessageDialog("配置文件读取错误","error",Messages.getErrorIcon());
+            return;
         }
-    }
-
-    private void getClassModel() {
-        content = editor.getDocument().getText();
-        String[] words = content.split(" ");
-        for (String word : words) {
-            if(word.contains("Generator")){
-                String[] ss = word.split("(?=[A-Z])");
-                String module = StringUtils.lowerCase(ss[0]);
-                String className = ss[1];
-                classModel.setClassName(className);
-                classModel.setClassFullName(word);
-                classModel.setModuleName(module);
-                MessagesUtil.showDebugMessage(className, "class name");
-            }
+        if(null == map.get("packageName") || StringUtils.isBlank(map.get("packageName").toString())){
+            Messages.showMessageDialog("packageName为空不能创建文件路径","error",Messages.getErrorIcon());
+            return;
         }
-        if (null == classModel.getClassName()) {
-            MessagesUtil.showErrorMessage("Create failed ,Can't found 'Generator' in your class name,your class name must contain 'Generator'", "error");
-            canCreate = false;
+        if(null == map.get("ClassName") || StringUtils.isBlank(map.get("ClassName").toString())){
+            Messages.showMessageDialog("ClassName不能为空","error",Messages.getErrorIcon());
+            return;
         }
-    }
-    private void init(AnActionEvent e) {
-        editor = e.getData(PlatformDataKeys.EDITOR);
-        classModel = new ClassModel();
+        if(null == map.get("className") || StringUtils.isBlank(map.get("className").toString())){
+            Messages.showMessageDialog("className不能为空","error",Messages.getErrorIcon());
+        }
+        if(null == map.get("moduleName") || StringUtils.isBlank(map.get("moduleName").toString())){
+            Messages.showMessageDialog("moduleName不能为空","error",Messages.getErrorIcon());
+            return;
+        }
+        String packageName = map.get("packageName").toString();
+        String ClassName = map.get("ClassName").toString();
+        String moduleName = map.get("moduleName").toString();
+        ClassCreateHelper.createDao(dir,packageName,ClassName,moduleName,map);
+        ClassCreateHelper.createService(dir,packageName,ClassName,moduleName,map);
+        ClassCreateHelper.createServiceImpl(dir,packageName,ClassName,moduleName,map);
+        ClassCreateHelper.createModel(dir,packageName,ClassName,moduleName,map);
     }
 }
