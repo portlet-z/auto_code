@@ -46,7 +46,7 @@ public class ClassCreateHelper {
         }
         StringWriter str = new StringWriter();
         InputStream inputStream = ClassCreateHelper.class.getClassLoader().getResourceAsStream(vmPath);
-        String template = new BufferedReader(new InputStreamReader(inputStream)).lines().parallel().collect(Collectors.joining("\n"));
+        String template = new BufferedReader(new InputStreamReader(inputStream,"UTF-8")).lines().parallel().collect(Collectors.joining("\n"));
         VelocityEngine engine = new VelocityEngine();
         engine.setProperty("runtime.references.strict", false);
         engine.setProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogSystem");
@@ -56,6 +56,7 @@ public class ClassCreateHelper {
         BufferedWriter writer = new BufferedWriter(w);
         writer.write(str.toString());
         writer.flush();
+        writer.close();
     }
 
 }
