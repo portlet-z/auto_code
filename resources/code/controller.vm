@@ -25,9 +25,10 @@ public class ${ClassName}Controller {
     private ${ClassName}Service ${className}Service;
 
     @RequestMapping(value = {"list", ""}, method = RequestMethod.GET)
-    public Pagination getPages(String title){
-        Cnd cnd = Cnd.NEW();
-        return ${className}Service.listPage(null,cnd.where("title","LIKE",title));
+    public Pagination list(String title,
+                                @RequestParam(defaultValue = "1") int pageNo,
+                                @RequestParam(defaultValue = DEF_PAGE_SIZE) int pageSize) {
+        return ${className}Service.listPage(pageNo, pageSize, Cnd.where("title", "=", title));
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
