@@ -1,10 +1,13 @@
 package cn.people;
 
+import org.apache.commons.lang.WordUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import java.io.*;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -32,6 +35,11 @@ public class ClassCreateHelper {
         String filePath = fileDir + ClassName + ".java";
         createFile(fileDir,filePath,"code/model.vm",map);
     }
+    public static void createController(String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException{
+        String fileDir = dir + "/" + packageName.replace(".","/") + "/modules/" + moduleName + "/web/";
+        String filePath = fileDir + ClassName + "Controller.java";
+        createFile(fileDir,filePath,"code/controller.vm",map);
+    }
 
     private static void createFile(String dir,String path,String vmPath,Map<String,Object> map) throws IOException{
         File dirs = new File(dir);
@@ -43,6 +51,11 @@ public class ClassCreateHelper {
         VelocityContext context = new VelocityContext();
         for(String key : map.keySet()){
             context.put(key,map.get(key));
+            if(key.equals("ClassName")){
+                context.put("tableName",CamelhumpToUnderline(map.get(key).toString()));
+                context.put("className", WordUtils.uncapitalize(map.get(key).toString()));
+                context.put("controllerPath",CamelhumpToPath(map.get(key).toString()));
+            }
         }
         StringWriter str = new StringWriter();
         InputStream inputStream = ClassCreateHelper.class.getClassLoader().getResourceAsStream(vmPath);
@@ -59,4 +72,28 @@ public class ClassCreateHelper {
         writer.close();
     }
 
+    // 将驼峰风格替换为下划线风格
+    private static String CamelhumpToUnderline(String str) {
+        Matcher matcher = Pattern.compile("[A-Z]").matcher(str);
+        StringBuilder builder = new StringBuilder(str);
+        for (int i = 0; matcher.find(); i++) {
+            builder.replace(matcher.start() + i, matcher.end() + i, "_" + matcher.group().toLowerCase());
+        }
+        if (builder.charAt(0) == '_') {
+            builder.deleteCharAt(0);
+        }
+        return builder.toString();
+    }
+
+    private static String CamelhumpToPath(String str) {
+        Matcher matcher = Pattern.compile("[A-Z]").matcher(str);
+        StringBuilder builder = new StringBuilder(str);
+        for (int i = 0; matcher.find(); i++) {
+            builder.replace(matcher.start() + i, matcher.end() + i, "/" + matcher.group().toLowerCase());
+        }
+        if (builder.charAt(0) == '/') {
+            builder.deleteCharAt(0);
+        }
+        return builder.toString();
+    }
 }

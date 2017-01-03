@@ -53,13 +53,18 @@ public class GeneratorAction extends AnAction {
             Messages.showMessageDialog("ClassName不能为空","error",Messages.getErrorIcon());
             return;
         }
-        if(null == map.get("className") || StringUtils.isBlank(map.get("className").toString())){
-            Messages.showMessageDialog("className不能为空","error",Messages.getErrorIcon());
-        }
         if(null == map.get("moduleName") || StringUtils.isBlank(map.get("moduleName").toString())){
             Messages.showMessageDialog("moduleName不能为空","error",Messages.getErrorIcon());
             return;
         }
+        if(null == map.get("controller") || StringUtils.isBlank(map.get("controller").toString())){
+            Messages.showMessageDialog("controller不能为空","error",Messages.getErrorIcon());
+            if(!map.get("controller").toString().equals("web") || !map.get("controller").toString().endsWith("app")){
+                Messages.showMessageDialog("controller目录应为web或者app","error",Messages.getErrorIcon());
+            }
+            return;
+        }
+        String controllerDir = dir.replace("service",map.get("controller").toString());
         String packageName = map.get("packageName").toString();
         String ClassName = map.get("ClassName").toString();
         String moduleName = map.get("moduleName").toString();
@@ -67,5 +72,7 @@ public class GeneratorAction extends AnAction {
         ClassCreateHelper.createService(dir,packageName,ClassName,moduleName,map);
         ClassCreateHelper.createServiceImpl(dir,packageName,ClassName,moduleName,map);
         ClassCreateHelper.createModel(dir,packageName,ClassName,moduleName,map);
+        ClassCreateHelper.createController(controllerDir,packageName,ClassName,moduleName,map);
     }
+
 }

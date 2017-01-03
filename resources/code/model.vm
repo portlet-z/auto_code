@@ -7,9 +7,8 @@ import org.nutz.dao.entity.annotation.*;
 /**
 * ${functionName}
 * @author ${author}
-* @version ${version}
 */
-@Table("${moduleName}_${className}")
+@Table("${moduleName}_${tableName}")
 @Data
 public class ${ClassName} extends BaseModel {
 

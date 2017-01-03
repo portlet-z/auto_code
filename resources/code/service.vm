@@ -5,7 +5,6 @@ import cn.people.one.core.base.service.IBaseService;
 /**
 * ${functionName}Service
 * @author ${author}
-* @version ${version}
 */
 public interface I${ClassName}Service extends IBaseService{
 

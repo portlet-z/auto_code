@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Configuration;
 /**
  * ${functionName}Dao
  * @author ${author}
- * @version ${version}
  */
 @Configuration
 public class ${ClassName}Dao extends BaseDao<${ClassName}>{
