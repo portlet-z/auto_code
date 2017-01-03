@@ -42,6 +42,11 @@ public class ${ClassName}Controller {
         return ${className}Service.delete(id);
     }
 
+    @RequestMapping("/${controllerPath}/{id}")
+    public int getDetailById(@PathVariable Integer id){
+        return ${className}Service.fetch(id);
+    }
+
     @RequestMapping("/update")
     public int update(${ClassName} ${className}){
         return ${className}Service.update(${className});
