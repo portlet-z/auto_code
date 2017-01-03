@@ -16,14 +16,14 @@ import java.util.List;
 * @author ${author}
 */
 @RestController
-@RequestMapping("/${adminPath}/${moduleName}/")
+@RequestMapping("/${adminPath}/${moduleName}/${controllerPath}/")
 @Slf4j
 public class ${ClassName}Controller {
 
     @Autowired
     private ${ClassName}Service ${className}Service;
 
-    @RequestMapping("${controllerPath}/")
+    @RequestMapping("")
     public List<${ClassName}> getList(){
         return null;
     }
@@ -43,7 +43,7 @@ public class ${ClassName}Controller {
         return ${className}Service.delete(id);
     }
 
-    @RequestMapping("/${controllerPath}/{id}")
+    @RequestMapping("/{id}")
     public ${ClassName} getDetailById(@PathVariable Integer id){
         return ${className}Service.fetch(id);
     }
