@@ -1,10 +1,12 @@
 package ${packageName}.modules.${moduleName}.web;
 
-import cn.people.one.core.base.page.Pagination;
+import cn.people.one.core.base.api.Result;
 import cn.people.one.modules.${moduleName}.model.${ClassName};
 import cn.people.one.modules.${moduleName}.service.impl.${ClassName}Service;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.nutz.dao.Cnd;
+import org.nutz.dao.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,29 +25,32 @@ public class ${ClassName}Controller {
     private ${ClassName}Service ${className}Service;
 
     @RequestMapping(value = {"list", ""}, method = RequestMethod.GET)
-    public Pagination list(String title,
-                                @RequestParam(defaultValue = "1") int pageNo,
-                                @RequestParam(defaultValue = DEF_PAGE_SIZE) int pageSize) {
-        return ${className}Service.listPage(pageNo, pageSize, Cnd.where("title", "=", title));
-    }
+    public Result list(String title,
+                            @RequestParam(defaultValue = "1") int pageNo,
+                            @RequestParam(defaultValue = DEF_PAGE_SIZE) int pageSize) {
 
-    @RequestMapping(value = "", method = RequestMethod.POST)
-    public int save(@RequestBody ${ClassName} ${className}){
-        if(${className}.getId() == null){
-            ${className}Service.insert(${className});
-            return 1;
+        Condition cnd = Cnd.NEW();
+        if(StringUtils.isNotEmpty(title)){
+            cnd = Cnd.where("title", "=", title);
         }
-        return ${className}Service.update(${className});
-    }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public int delete(@PathVariable Integer id){
-        return ${className}Service.delete(id);
+        return Result.success(${className}Service.listPage(pageNo, pageSize, cnd, "id|title"));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ${ClassName} getDetailById(@PathVariable Integer id){
-        return ${className}Service.fetch(id);
+    public Result view(@PathVariable Integer id) {
+        return Result.success(${className}Service.fetch(id));
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public Result save(@RequestBody ${ClassName} ${className}) {
+        ${className}Service.save(${className});
+        return Result.success(${className});
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public Result delete(@PathVariable Integer id) {
+        return Result.success(${className}Service.delete(id));
     }
 
 }
