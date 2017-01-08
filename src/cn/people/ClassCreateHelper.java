@@ -15,30 +15,30 @@ import java.util.stream.Collectors;
  */
 public class ClassCreateHelper {
 
-    public static void createDao(String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException {
+    public static void createDao(String vmPath,String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException {
         String fileDir = dir + "/" + packageName.replace(".","/") + "/modules/" + moduleName + "/dao/";
         String filePath = fileDir + ClassName + "Dao.java";
-        createFile(fileDir,filePath,"code/dao.vm",map);
+        createFile(fileDir,filePath,vmPath+"dao.vm",map);
     }
-    public static void createService(String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException {
+    public static void createService(String vmPath,String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException {
         String fileDir = dir + "/" + packageName.replace(".","/") + "/modules/" + moduleName + "/service/";
         String filePath = fileDir + "I" + ClassName + "Service.java";
-        createFile(fileDir,filePath,"code/service.vm",map);
+        createFile(fileDir,filePath,vmPath+"service.vm",map);
     }
-    public static void createServiceImpl(String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException {
+    public static void createServiceImpl(String vmPath,String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException {
         String fileDir = dir + "/" + packageName.replace(".","/") + "/modules/" + moduleName + "/service/impl/";
         String filePath = fileDir + ClassName + "Service.java";
-        createFile(fileDir,filePath,"code/serviceImpl.vm",map);
+        createFile(fileDir,filePath,vmPath+"serviceImpl.vm",map);
     }
-    public static void createModel(String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException {
+    public static void createModel(String vmPath,String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException {
         String fileDir = dir + "/" + packageName.replace(".","/") + "/modules/" + moduleName + "/model/";
         String filePath = fileDir + ClassName + ".java";
-        createFile(fileDir,filePath,"code/model.vm",map);
+        createFile(fileDir,filePath,vmPath+"model.vm",map);
     }
-    public static void createController(String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException{
+    public static void createController(String vmPath,String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException{
         String fileDir = dir + "/" + packageName.replace(".","/") + "/modules/" + moduleName + "/web/";
         String filePath = fileDir + ClassName + "Controller.java";
-        createFile(fileDir,filePath,"code/controller.vm",map);
+        createFile(fileDir,filePath,vmPath+"controller.vm",map);
     }
 
     private static void createFile(String dir,String path,String vmPath,Map<String,Object> map) throws IOException{
@@ -58,7 +58,7 @@ public class ClassCreateHelper {
             }
         }
         StringWriter str = new StringWriter();
-        InputStream inputStream = ClassCreateHelper.class.getClassLoader().getResourceAsStream(vmPath);
+        InputStream inputStream = new FileInputStream(new File(vmPath));//ClassCreateHelper.class.getClassLoader().getResourceAsStream(vmPath);
         String template = new BufferedReader(new InputStreamReader(inputStream,"UTF-8")).lines().parallel().collect(Collectors.joining("\n"));
         VelocityEngine engine = new VelocityEngine();
         engine.setProperty("runtime.references.strict", false);

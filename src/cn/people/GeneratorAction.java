@@ -38,6 +38,7 @@ public class GeneratorAction extends AnAction {
             return;
         }
         String dir = path.replace("resources/generator.yml","java");
+        String vmPath = path.replace("generator.yml","code/");
         InputStream inputStream = new FileInputStream(path);
         Yaml yaml = new Yaml();
         Map<String,Object> map = (Map<String, Object>)yaml.load(inputStream);
@@ -68,11 +69,11 @@ public class GeneratorAction extends AnAction {
         String packageName = map.get("packageName").toString();
         String ClassName = map.get("ClassName").toString();
         String moduleName = map.get("moduleName").toString();
-        ClassCreateHelper.createDao(dir,packageName,ClassName,moduleName,map);
-        ClassCreateHelper.createService(dir,packageName,ClassName,moduleName,map);
-        ClassCreateHelper.createServiceImpl(dir,packageName,ClassName,moduleName,map);
-        ClassCreateHelper.createModel(dir,packageName,ClassName,moduleName,map);
-        ClassCreateHelper.createController(controllerDir,packageName,ClassName,moduleName,map);
+        ClassCreateHelper.createDao(vmPath,dir,packageName,ClassName,moduleName,map);
+        ClassCreateHelper.createService(vmPath,dir,packageName,ClassName,moduleName,map);
+        ClassCreateHelper.createServiceImpl(vmPath,dir,packageName,ClassName,moduleName,map);
+        ClassCreateHelper.createModel(vmPath,dir,packageName,ClassName,moduleName,map);
+        ClassCreateHelper.createController(vmPath,controllerDir,packageName,ClassName,moduleName,map);
     }
 
 }
