@@ -15,11 +15,6 @@ import java.util.stream.Collectors;
  */
 public class ClassCreateHelper {
 
-    public static void createDao(String vmPath,String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException {
-        String fileDir = dir + "/" + packageName.replace(".","/") + "/modules/" + moduleName + "/dao/";
-        String filePath = fileDir + ClassName + "Dao.java";
-        createFile(fileDir,filePath,vmPath+"dao.vm",map);
-    }
     public static void createService(String vmPath,String dir,String packageName,String ClassName,String moduleName,Map<String,Object> map) throws IOException {
         String fileDir = dir + "/" + packageName.replace(".","/") + "/modules/" + moduleName + "/service/";
         String filePath = fileDir + "I" + ClassName + "Service.java";

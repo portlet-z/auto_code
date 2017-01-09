@@ -69,7 +69,6 @@ public class GeneratorAction extends AnAction {
         String packageName = map.get("packageName").toString();
         String ClassName = map.get("ClassName").toString();
         String moduleName = map.get("moduleName").toString();
-        ClassCreateHelper.createDao(vmPath,dir,packageName,ClassName,moduleName,map);
         ClassCreateHelper.createService(vmPath,dir,packageName,ClassName,moduleName,map);
         ClassCreateHelper.createServiceImpl(vmPath,dir,packageName,ClassName,moduleName,map);
         ClassCreateHelper.createModel(vmPath,dir,packageName,ClassName,moduleName,map);
